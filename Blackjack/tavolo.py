@@ -4,7 +4,7 @@ from mazzo import Deck
 
 
 class BlackjackTable:
-    def __init__(self, player_hand: Hand, dealer_hand: Hand, ):
+    def __init__(self, player_hand: Hand, dealer_hand: Hand ):
         self.__player_hand = player_hand
         self.__dealer_hand = dealer_hand
         self.__deck = self.__create_deck()
@@ -20,10 +20,24 @@ class BlackjackTable:
         for i in range(2):
             self.__player_hand.add_card(self.__deck.pick())
             self.__dealer_hand.add_card(self.__deck.pick())
+        while True:
+            print(f"La mano del giocatore è {self.__player_hand} ({str(self.__points_calculator(self.__player_hand))})")
+            print("La mano del banco è [Carta coperta], " + ', '.join(str(card) for card in self.__dealer_hand.cards[1:]))
+            self.__player_turn()
+            self.__dealer_turn()
+            if self.__points_calculator(self.__player_hand) > 21 > self.__points_calculator(self.__dealer_hand):
+                print("Il Giocatore Sballa! Vince il Banco!")
+                break
+            elif self.__points_calculator(self.__dealer_hand) > 21 > self.__points_calculator(self.__player_hand):
+                print("Il Banco Sballa! Vince il Giocatore!")
+                break
+            elif self.__points_calculator(self.__dealer_hand) == 21 and self.__points_calculator(self.__player_hand) == 21:
+                print("Paregio! Nessuno dei due ha Sballato!")
+                break
 
 
     def __points_calculator(self, hand: Hand) -> int:
-        cards = hand.cards()
+        cards = hand.cards
         points = 0
 
         for card in cards:
@@ -36,15 +50,15 @@ class BlackjackTable:
 
     def __player_turn(self) -> None:
         while True:
-            choice = input("Chiedi (C) o Stai (S)?")
-            choice.upper()
-            if choice != "S" and choice != "C":
+            choice = input("Chiedi (C) o Stai (S)? ")
+            if choice.upper() != "S" and choice.upper() != "C":
                 print("La scelta non è valida!")
                 continue
             if choice == "S":
                 break
             if choice == "C":
                 self.__player_hand.add_card(self.__deck.pick())
+                print(f"Hai pescato un {self.__player_hand.cards[-1]}")
 
     def __dealer_turn(self) -> None:
         while True:
@@ -52,3 +66,4 @@ class BlackjackTable:
                 break
             else:
                 self.__dealer_hand.add_card(self.__deck.pick())
+                print(f"Il Banco ha pescato un {self.__dealer_hand.cards[-1]}")
