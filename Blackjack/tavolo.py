@@ -17,7 +17,10 @@ class BlackjackTable:
         return Deck([Card(seed, rank) for seed in seeds for rank in ranks])
 
     def game(self):
-        return
+        for i in range(2):
+            self.__player_hand.add_card(self.__deck.pick())
+            self.__dealer_hand.add_card(self.__deck.pick())
+
 
     def __points_calculator(self, hand: Hand) -> int:
         cards = hand.cards()
@@ -31,8 +34,21 @@ class BlackjackTable:
         return points
 
 
-    def __player_turn(self):
-        return
+    def __player_turn(self) -> None:
+        while True:
+            choice = input("Chiedi (C) o Stai (S)?")
+            choice.upper()
+            if choice != "S" and choice != "C":
+                print("La scelta non è valida!")
+                continue
+            if choice == "S":
+                break
+            if choice == "C":
+                self.__player_hand.add_card(self.__deck.pick())
 
-    def __dealer_turn(self):
-        return
+    def __dealer_turn(self) -> None:
+        while True:
+            if self.__points_calculator(self.__dealer_hand) >= 16:
+                break
+            else:
+                self.__dealer_hand.add_card(self.__deck.pick())
